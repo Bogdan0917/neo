@@ -1,0 +1,573 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(
+        135deg,
+        #667eea,  /* Голубой */
+        #764ba2,  /* Фиолетовый */
+        #f472b6,  /* Розовый */
+        #fbbf24,  /* Жёлтый */
+        #34d399,  /* Зелёный */
+        #60a5fa,  /* Светло-голубой */
+        #ec4899,  /* Ярко-розовый */
+        #10b981,  /* Изумрудный */
+        #f97316,  /* Оранжевый */
+        #3b82f6   /* Синий */
+    );
+    background-size: 800% 800%;
+    animation: gradientAnimation 60s linear infinite; /* Linear для равномерной скорости, 30s для баланса */
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: var(--start-x) var(--start-y); }
+    50% { background-position: 100% 100%; }
+    100% { background-position: var(--start-x) var(--start-y); }
+}
+
+.container {
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: max-height 0.5s ease; /* Плавная анимация высоты */
+    max-height: 80vh; /* Максимальная высота при номерах */
+    height: auto; /* Динамическая высота */
+    overflow-y: auto;
+    padding-bottom: 20px;
+    width: 90%; /* Занимает всю доступную ширину родителя */
+    max-width: 600px; /* Ограничиваем максимальную ширину для компактности */
+    min-width: 400px; /* Минимальная ширина, чтобы не сужался */
+    margin: 0 auto; /* Центрирование */
+    padding: 20px; /* Внутренний отступ (если был раньше) */
+    box-sizing: border-box; /* Учитываем padding в ширине */
+    backdrop-filter: blur(5px);
+}
+
+/* Минимальная высота без номеров */
+.container:not(.expanded) {
+    max-height: 450px; /* Минимальная высота, когда номеров нет */
+}
+
+h1 {
+    font-size: 24px;
+    color: #1f2937;
+    margin: 0 0 20px;
+    font-weight: 600;
+}
+
+label {
+    font-size: 14px;
+    color: #4b5563;
+    margin: 15px 0 5px;
+    display: block;
+    text-align: left;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-top: 8px;
+    background: #f3f4f6;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select:focus {
+    outline: none;
+    background: #e5e7eb;
+}
+
+button {
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin: 5px 5px 0 0;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    color: white;
+    margin-top: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button[onclick="getNumber()"] {
+    width: 60%;
+    padding: 10px;
+    background: linear-gradient(90deg, #ec4899, #db2777);
+    margin: 20px auto 0;
+    display: block;
+}
+
+button.small-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button.small-btn.close-btn {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+button[onclick="getNumber()"]:hover {
+    background: linear-gradient(90deg, #db2777, #be185d);
+}
+
+button.small-btn:hover {
+    background: linear-gradient(90deg, #059669, #047857);
+}
+
+button.small-btn.close-btn:hover {
+    background: linear-gradient(90deg, #dc2626, #b91c1c);
+}
+
+.number, .message, .balance, .error {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #1f2937;
+    overflow-y: auto; /* Включаем прокрутку */
+}
+
+.number-item {
+    margin: 11px 0;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    opacity: 1;
+    height: auto;
+    transition: opacity 0.5s ease, height 0.5s ease; /* Добавляем плавность */
+}
+
+.number-item .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.number-item .service {
+    display: flex;
+    align-items: center;
+}
+
+.number-item .timer {
+    font-size: 12px;
+    color: #4b5563;
+}
+
+.number-item .phone-line {
+    margin: 0;
+    line-height: 1.1;
+    height: 20px;
+    display: flex; /* Для выравнивания номера и крестика */
+    justify-content: center;
+    align-items: center;
+}
+
+.number-item .bold-phone {
+    font-weight: bold;
+}
+
+.number-item .close-icon {
+    display: inline-block;
+    margin-left: 5px; /* Небольшой отступ слева от номера */
+    vertical-align: middle;
+}
+
+.number-item .close-icon img {
+    width: 20px; /* Миниатюрный размер */
+    height: 20px; /* Не больше высоты текста */
+}
+
+.number-item .sms-line {
+    margin: 6px 0 0 0;
+}
+
+.number-item .sms-code {
+    display: block;
+}
+
+/* Убираем лишние br */
+.number-item br {
+    display: none;
+}
+
+.service-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.bold-phone {
+    font-weight: 700;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+.balance {
+    font-weight: 500;
+    color: #16a34a;
+}
+
+.error {
+    color: #dc2626;
+    font-size: 14px;
+}
+
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+
+/* История */
+.balance-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.history-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    margin-left: 5px;
+    vertical-align: middle;
+    position: relative;
+    top: 9px;
+}
+
+.history-icon:hover {
+    transform: scale(1.1);
+}
+
+.modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    opacity: 0; /* Начальная непрозрачность */
+    transition: opacity 0.3s ease; /* Плавное изменение непрозрачности */
+    display: none; /* Скрыто по умолчанию */
+}
+
+.modal.show {
+    display: block; /* Показываем */
+    opacity: 1; /* Полная видимость */
+}
+
+.modal-content {
+    background: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 11px;
+    width: 80%;
+    max-width: 400px;
+    max-height: 75vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transform: translateY(20px); /* Начальное смещение вниз */
+    transition: transform 0.3s ease; /* Плавное изменение смещения */
+}
+
+.modal.show .modal-content {
+    transform: translateY(0); /* Нормальное положение при открытии */
+}
+
+.right-controls {
+    display: flex; /* НОВОЕ: Контейнер для луны и истории */
+    align-items: center;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.history-item {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f9fafb;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.pagination {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination button {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.pagination button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Стили для SMS на главной странице */
+.sms-code {
+    font-weight: 700;
+    color: #2c5282;
+    background: #e6fffa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+body, .container {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.provider-switcher {
+    margin: 15px 0;
+    text-align: left;
+}
+
+.provider-switcher label {
+    margin-bottom: 5px;
+}
+
+.provider-switcher select {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.provider-switcher select:focus {
+    outline: none;
+    background: #e5e7eb;
+}
+/* Существующие стили для .number-item и других элементов остаются без изменений */
+
+/* Существующие стили для .number-item и других элементов остаются без изменений */
+
+.select-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 10px 0;
+    padding: 0 10px;
+}
+
+.select-group {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    max-width: 180px;
+    align-items: center; /* Центрируем содержимое блока */
+}
+
+.select-group label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    text-align: center; /* Центрируем текст метки */
+    width: 100%; /* Устанавливаем ширину метки равной select */
+}
+
+.select-group select {
+    width: 100%; /* Занимает всю ширину блока */
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+}
+.service-icon {
+    width: 20px; /* Устанавливаем размер изображения */
+    height: 20px;
+    margin-right: 5px; /* Отступ справа от изображения до названия сервиса */
+    border-radius: 4px; /* Закруглённые углы (можно увеличить до 6px или 8px для большего эффекта) */
+}
+.search-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background: #f9fafb;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+}
+.flag-container {
+    display: flex;
+    justify-content: center; /* Флаг по центру */
+    margin: 1px 0; /* Отступы сверху и снизу для разделения */
+    height: 20px; /* Фиксируем высоту контейнера */
+    line-height: 15px; /* Выравнивание по высоте */
+}
+
+.country-flag {
+    width: 20px; /* Маленький размер флага */
+    height: 15px;
+}
+body.dark-mode {
+    background: linear-gradient(
+        135deg,
+        #1a1a2e,  /* Тёмно-синий */
+        #16213e,  /* Глубокий синий */
+        #0f3460,  /* Ночной синий */
+        #53354a,  /* Тёмно-фиолетовый */
+        #2d1e2f   /* Тёмно-бордовый */
+    );
+    background-size: 800% 800%;
+    animation: gradientAnimation 35s linear infinite;
+    color: #e0e0e0; /* Светлый текст */
+}
+
+body.dark-mode .container {
+    background: rgba(30, 30, 46, 0.95); /* Тёмно-синий фон */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode select,
+body.dark-mode button {
+    background: #2a2a3b; /* Тёмный фон для селектов и кнопок */
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode button {
+    background: #4a4e69; /* Тёмно-фиолетовая кнопка */
+}
+
+body.dark-mode button:hover {
+    background: #5c6287;
+}
+
+body.dark-mode button:disabled {
+    background: #3a3a4e;
+}
+
+body.dark-mode .number {
+    color: #e0e0e0;
+}
+
+body.dark-mode .number-item {
+    background: #2a2a3b;
+    border: 1px solid #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .balance,
+body.dark-mode .error,
+body.dark-mode .message,
+body.dark-mode label {
+    color: #e0e0e0;
+}
+
+body.dark-mode .error {
+    color: #ff6b6b; /* Яркий красный для ошибок */
+}
+
+body.dark-mode .modal-content {
+    background: #2a2a3b;
+    color: #e0e0e0;
+}
+
+body.dark-mode .history-item {
+    border: 1px solid #444;
+    background: #33334d; /* Тёмный фон для элементов истории */
+}
+
+/* ИСПРАВЛЕНО: Дополнительные стили для тёмного режима */
+body.dark-mode .bold-phone {
+    color: #e0e0e0;
+    text-decoration: none; /* Убираем подчёркивание */
+}
+
+body.dark-mode .sms-code {
+    color: #60a5fa; /* Светло-голубой для SMS в тёмном режиме */
+    background: #1e3a8a; /* Тёмный фон для SMS */
+}
+.small-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    border: none;
+    cursor: pointer;
+    height: 28px; /* ИСПРАВЛЕНО: Фиксируем высоту, как у .history-icon */
+    width: 38px;
+    line-height: 12px; /* ИСПРАВЛЕНО: Центрируем текст по вертикали */
+    display: flex; /* НОВОЕ: Центрируем луну/солнце */
+    justify-content: center; /* НОВОЕ: Горизонтальное центрирование */
+    align-items: center;
+}
+body.dark-mode .search-input {
+    background: #33334d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .search-input:focus {
+    border-color: #60a5fa;
+    background: #3a3a5c;
+}
